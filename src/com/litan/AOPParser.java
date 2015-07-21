@@ -27,20 +27,19 @@ public class AOPParser {
             try {
                 BufferedReader br = new BufferedReader(new FileReader(new File(file)));
                 String line;
-                boolean timeLine = true;
-                while ((line = br.readLine()) != null) {
-                    System.out.println(line);
-                    if (line.startsWith("-")) {
-                        continue;
-                    }
-                    if (timeLine && line.startsWith("[")){
-                    } else if (!timeLine){
-                    } else {
-                        System.err.println("数据源文件格式不正确，应使用adb logcat -v long -s AOP");
-                        return;
-                    }
-                    timeLine = false;
-                }
+                ParsedFlow flow = new ParsedFlow();
+                try {
+					while ((line = br.readLine()) != null) {
+					    System.out.println(line);
+					    if (line.startsWith("-")) {
+					        continue;
+					    }
+					    flow.parseLine(line);
+					}
+				} catch (ParsedException e) {
+					System.err.println("遭遇异常");
+					e.printStackTrace();
+				}
                 line = br.readLine();
             } catch (FileNotFoundException e) {
                 System.err.println("文件未找到:" + file);
