@@ -32,7 +32,9 @@ public class AOPParser {
 				ParsedFlow flow = new ParsedFlow();
 				try {
 					while ((line = br.readLine()) != null) {
-						Log.v(line);
+						if (line.equals("")) {
+							continue;
+						}
 						if (line.startsWith("-")) {
 							continue;
 						}

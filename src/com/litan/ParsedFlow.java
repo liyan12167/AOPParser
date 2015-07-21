@@ -12,26 +12,19 @@ public class ParsedFlow {
 	private static final int LINE_BR = 2;
 
 	private static class TimeLineParser implements LineParser {
-
+		private String[] mDatas;
 		public void parse(String line, ContentValues data)
 				throws ParsedException {
-			// TODO Auto-generated method stub
-
+			mDatas = line.split(" +");
+			String monthAndDay = mDatas[1];
+			String time = mDatas[2];
+			String pidAndTid = mDatas[3];
+			String levAndTag = mDatas[4];
+			Log.d(monthAndDay + " " + time + " " + pidAndTid + " " + levAndTag);
 		}
-
 	}
 
 	private static class BodyLineParser implements LineParser {
-
-		public void parse(String line, ContentValues data)
-				throws ParsedException {
-			// TODO Auto-generated method stub
-
-		}
-
-	}
-
-	private static class BrLineParser implements LineParser {
 
 		public void parse(String line, ContentValues data)
 				throws ParsedException {
@@ -49,21 +42,12 @@ public class ParsedFlow {
 	public ParsedFlow() {
 		LINE_PARSER_LIST.add(new TimeLineParser());
 		LINE_PARSER_LIST.add(new BodyLineParser());
-		LINE_PARSER_LIST.add(new BrLineParser());
 	}
 
 	private int check(String line) throws ParsedException {
 		if (!line.startsWith("[")) {
 			if (!line.startsWith("PM")) {
-				if (!line.equals("\\br")) {
-					StringBuilder sb = new StringBuilder();
-					sb.append("不能解析：").append(line).append("\\br")
-							.append("请使用adb logcat -v long -s AOP作为数据源");
-					Log.e(sb.toString());
-					throw new ParsedException("未解析的行：" + line);
-				} else {
-					return LINE_BR;
-				}
+				throw new ParsedException("未解析的行：" + line);
 			} else {
 				return LINE_LOG;
 			}
