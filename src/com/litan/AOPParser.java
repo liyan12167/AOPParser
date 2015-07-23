@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -13,10 +14,13 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.litan.db.DBHelper;
+
 public class AOPParser {
     private static final String FILE = "f";
+    private static final String DELETE = "d";
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, SQLException, ClassNotFoundException {
 	Options opts = new Options();
 	Option opt = new Option(FILE, true, "指定数据源文件");
 	opts.addOption(opt);
@@ -26,6 +30,11 @@ public class AOPParser {
 	    Log.e("-f 是必须的,用来制定数据源文件");
 	    return;
 	}
+	if (!cl.hasOption(DELETE) && DBHelper.isDbExist()) {
+	    Log.e("DB already exists, append -d to force delete it");
+	    return;
+	}
+	DBHelper.createDB();
 	String file = cl.getOptionValue(FILE);
 	Log.d("file:" + file);
 	try {
