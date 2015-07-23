@@ -18,9 +18,15 @@ public class ParsedFlow {
 	    String monthAndDay = datas[1];
 	    String time = datas[2];
 	    String pidAndTid = datas[3];
-	    datas = pidAndTid.split(":");
-	    int pid = Integer.valueOf(datas[0]);
-	    int tid = Integer.valueOf(datas[1]);
+	    int pid, tid;
+	    if (pidAndTid.charAt(pidAndTid.length() - 1) == ':') {
+	    	pid = Integer.valueOf(pidAndTid.substring(0, pidAndTid.length() - 1));
+	    	tid = Integer.valueOf(datas[4]);
+	    } else {
+	    	datas = pidAndTid.split(":");
+	    	pid = Integer.valueOf(datas[0]);
+	    	tid = Integer.valueOf(datas[1]);
+	    }
 	    data.put(Column.TIME, String.format("%s %s", monthAndDay, time));
 	    data.put(Column.PID, pid);
 	    data.put(Column.TID, tid);
