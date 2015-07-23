@@ -1,15 +1,15 @@
 package com.litan;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.litan.parse.ContentValues;
+import com.litan.db.DBHelper;
 import com.litan.parse.LineParser;
 
 public class ParsedFlow {
     private static final int LINE_UNKNOW = -1;
     private static final int LINE_TIME = 0;
     private static final int LINE_LOG = 1;
-    private static final int LINE_BR = 2;
 
     private static class TimeLineParser implements LineParser {
 	public void parse(String line, ContentValues data)
@@ -55,7 +55,7 @@ public class ParsedFlow {
 	    }
 	    data.put(Column.TAG, tag);
 	    data.put(Column.PKG, pkgSb.toString());
-	    data.put(Column.METHOD_SIG, mthSig);
+	    data.put(Column.SIG, mthSig);
 	    data.put(Column.THREAD_TIME, Integer.valueOf(threadTime));
 	    data.put(Column.CPU_TIME, Integer.valueOf(cpuTime));
 	}
@@ -65,7 +65,7 @@ public class ParsedFlow {
     private final ArrayList<LineParser> LINE_PARSER_LIST = new ArrayList<LineParser>();
 
     private int mNextLineShouldBe = LINE_UNKNOW;
-    private ContentValues mCurValues;
+    private ContentValues mCurValues = new ContentValues(8);
 
     public ParsedFlow() {
 	LINE_PARSER_LIST.add(new TimeLineParser());
@@ -84,10 +84,10 @@ public class ParsedFlow {
 	}
     }
 
-    public void parseLine(String line) throws ParsedException {
+    public static int COUNT = 0;
+    public void parseLine(String line) throws ParsedException, SQLException {
 	int lineNo = check(line);
 	if (lineNo == LINE_TIME) {
-	    mCurValues = new ContentValues();
 	    LINE_PARSER_LIST.get(lineNo).parse(line, mCurValues);
 	    mNextLineShouldBe = LINE_LOG;
 	} else {
@@ -100,10 +100,10 @@ public class ParsedFlow {
 	    }
 	    if (lineNo == LINE_LOG) {
 		LINE_PARSER_LIST.get(lineNo).parse(line, mCurValues);
-		mNextLineShouldBe = LINE_BR;
-	    } else if (lineNo == LINE_BR) {
-		LINE_PARSER_LIST.get(lineNo).parse(line, mCurValues);
-		mNextLineShouldBe = LINE_TIME;
+		COUNT++;
+		DBHelper.insertPM(mCurValues);
+		mCurValues.clear();
+		mNextLineShouldBe = LINE_UNKNOW;
 	    }
 	}
     }

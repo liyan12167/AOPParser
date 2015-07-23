@@ -22,8 +22,8 @@ public class AOPParser {
 
     public static void main(String[] args) throws ParseException, SQLException, ClassNotFoundException {
 	Options opts = new Options();
-	Option opt = new Option(FILE, true, "指定数据源文件");
-	opts.addOption(opt);
+	opts.addOption(new Option(FILE, true, "指定数据源文件"));
+	opts.addOption(new Option(DELETE, "delete old DB, force to generate new DB"));
 	CommandLineParser parser = new DefaultParser();
 	CommandLine cl = parser.parse(opts, args);
 	if (!cl.hasOption(FILE)) {
@@ -67,6 +67,8 @@ public class AOPParser {
 	    return;
 	}
 	Log.d("解析完毕");
+	DBHelper.commit();
+	Log.d("COUNT:" + ParsedFlow.COUNT);
 	// opt = new Option("threadTime", false, "按方法执行的平均线程消耗时间从高到低显示前十个");
     }
 }
