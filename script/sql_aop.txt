@@ -1,0 +1,19 @@
+select count(*) from PM;
+
+/* query top 30 consuming thread_time methods */
+select time,case when pid=tid then 'main' else 'thread' end as T, pkg, sig, tt, ct from PM order by tt desc, ct desc limit 30;
+
+/* query top 30 consuming cpu_time methods */
+select time,case when pid=tid then 'main' else 'thread' end as T, pkg, sig, tt, ct from PM order by ct desc, tt desc limit 30;
+
+/* query top 30 consuming thread_time methods on main thread */
+select time, pkg, sig, tt, ct from PM where tt>=100 and pid==tid order by tt desc, ct desc limit 30;
+
+/* query top 30 method execute count group by pkg */ 
+select pkg, c from (select pkg, count(pkg) as c from PM group by pkg order by c desc limit 30) where c>=100;
+
+/* query top 30 method execute count > 100 */
+select s, c from (select s, count(s) as c from (select pkg||'.'||sig as s from PM) group by s order by c desc limit 30) where c>=100;
+
+/* query top 30 total consuming cpu_time methods and average consume per execute */
+select SIG, SUM_CT, COUNT_SIG, SUM_CT/COUNT_SIG as AVE_CT from (select SIG, sum(CT) as 'SUM_CT', count(SIG) as 'COUNT_SIG' from (select pkg||'.'||sig as 'SIG', ct as 'CT' from PM) group by SIG order by SUM_CT desc limit 30) where SUM_CT>=50;
