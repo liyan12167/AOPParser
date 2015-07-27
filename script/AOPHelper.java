@@ -1,9 +1,9 @@
-package com.dianxinos.powermanager;
+package com.dianxinos.powermanager.aop;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-class AOPHelper {
+public class AOPHelper {
     private static final int PROC_SPACE_TERM = (int) ' ';
     // private static final int PROC_COMBINE = 0x100;
     private static final int PROC_PARENS = 0x200;
@@ -34,21 +34,30 @@ class AOPHelper {
         }
     }
     private static HashMap<Integer, String> pidStatMap = new HashMap<Integer, String>();
-    static long getCpuTime() {
+    private static HashMap<Integer, String> tidStatMap = new HashMap<Integer, String>();
+    public static long getCpuTime() {
         try {
             long[] procStats = new long[4];
-            sReadProcFile.invoke(android.os.Process.class, getStat(), PROCESS_STATS_FORMAT, null, procStats, null);
+            sReadProcFile.invoke(android.os.Process.class, getStat(true), PROCESS_STATS_FORMAT, null, procStats, null);
             return procStats[2] + procStats[3];
         } catch (Exception e) {
         }
         return 0;
     }
-    private static String getStat() {
+    private static String getStat(boolean isThread) {
         int pid = android.os.Process.myPid();
         String stat = pidStatMap.get(pid);
         if (stat == null) {
-            stat = String.format("/proc/%s/stat", pid);
+            stat = String.format("/proc/%d/stat", pid);
             pidStatMap.put(pid, stat);
+        }
+        if (isThread) {
+            int tid = android.os.Process.myTid();
+            stat = tidStatMap.get(tid);
+            if (stat == null) {
+                stat = String.format("/proc/%d/task/%d/stat", pid, tid);
+                tidStatMap.put(tid, stat);
+            }
         }
         return stat;
     }
