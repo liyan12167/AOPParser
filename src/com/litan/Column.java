@@ -11,4 +11,6 @@ public final class Column {
     public static final String SIG = "sig";// String value
     public static final String THREAD_TIME = "tt";// int value
     public static final String CPU_TIME = "ct"; // int value
+    public static final String CUR_THREAD_CPU_TIME = "tct";// long value
+    public static final String CUR_PROCESS_CPU_TIME = "pct";// long value
 }

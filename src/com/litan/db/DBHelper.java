@@ -21,7 +21,9 @@ public class DBHelper {
 	    + "pkg TEXT,"
 	    + "sig TEXT,"
 	    + "tt INTEGER,"
-	    + "ct INTEGER"
+	    + "ct INTEGER,"
+	    + "tct LONG,"
+	    + "pct LONG"
 	    + ");";
     public static boolean isDbExist() {
 	return new File(DB_NAME).exists();
@@ -51,7 +53,9 @@ public class DBHelper {
 	INSERT.append("'").append(cv.getAsString(Column.PKG)).append("',");
 	INSERT.append("'").append(cv.getAsString(Column.SIG)).append("',");
 	INSERT.append(cv.getAsInteger(Column.THREAD_TIME)).append(",");
-	INSERT.append(cv.getAsInteger(Column.CPU_TIME)).append(");");
+	INSERT.append(cv.getAsInteger(Column.CPU_TIME)).append(",");
+	INSERT.append(cv.getAsLong(Column.CUR_THREAD_CPU_TIME)).append(",");
+	INSERT.append(cv.getAsLong(Column.CUR_PROCESS_CPU_TIME)).append(");");
 	sSt.addBatch(INSERT.toString());
     }
     

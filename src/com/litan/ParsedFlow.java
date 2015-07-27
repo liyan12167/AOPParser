@@ -41,6 +41,8 @@ public class ParsedFlow {
 	    String tagAndBody = datas[0];
 	    String threadTime = datas[1];
 	    String cpuTime = datas[2];
+	    String curThreadCpuTime = datas[3];
+	    String curProcessCpuTime = datas[4];
 	    datas = tagAndBody.split(":");
 	    String tag = datas[0];
 	    String body = datas[1];
@@ -64,6 +66,8 @@ public class ParsedFlow {
 	    data.put(Column.SIG, mthSig);
 	    data.put(Column.THREAD_TIME, Integer.valueOf(threadTime));
 	    data.put(Column.CPU_TIME, Integer.valueOf(cpuTime));
+	    data.put(Column.CUR_THREAD_CPU_TIME, Long.valueOf(curThreadCpuTime));
+	    data.put(Column.CUR_PROCESS_CPU_TIME, Long.valueOf(curProcessCpuTime));
 	}
 
     }

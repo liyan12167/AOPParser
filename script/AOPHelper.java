@@ -35,10 +35,10 @@ public class AOPHelper {
     }
     private static HashMap<Integer, String> pidStatMap = new HashMap<Integer, String>();
     private static HashMap<Integer, String> tidStatMap = new HashMap<Integer, String>();
-    public static long getCpuTime() {
+    public static long getCpuTime(boolean isThread) {
         try {
             long[] procStats = new long[4];
-            sReadProcFile.invoke(android.os.Process.class, getStat(true), PROCESS_STATS_FORMAT, null, procStats, null);
+            sReadProcFile.invoke(android.os.Process.class, getStat(isThread), PROCESS_STATS_FORMAT, null, procStats, null);
             return procStats[2] + procStats[3];
         } catch (Exception e) {
         }
