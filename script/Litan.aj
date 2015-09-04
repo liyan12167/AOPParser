@@ -5,7 +5,7 @@ import android.util.Log;
 
 public aspect Litan {
     pointcut not_aop() : within(!com.dianxinos.powermanager.aop.*);
-    pointcut public_methods() : execution(public * *(..)) && not_aop();
+    pointcut public_methods() : execution(public * *(..)) && not_aop() && within(com.dianxinos.powermanager.* || com.dianxinos.powermanager.*.*);
 
     Object around()  : public_methods() {
         long c1 = AOPHelper.getCpuTime(true);
