@@ -14,6 +14,7 @@ public class DBHelper {
     private static final String TB_PM = "PM";
     private static final String TABLE_PM_CREATE_SQL =
 	    "create table " + TB_PM + "("
+	    + "id INTEGER PRIMARY KEY,"
 	    + "time TEXT,"
 	    + "pid INTEGER,"
 	    + "tid INTEGER,"
@@ -44,21 +45,18 @@ public class DBHelper {
 	sSt.executeUpdate(TABLE_PM_CREATE_SQL);
     }
 
+    private static final String INSERT_SQL = "insert into " + TB_PM + "(time,pid,tid,tag,pkg,sig,tt,ct,tct,pct)" + " values('%s',%d,%d,'%s','%s','%s',%d,%d,%d,%d);";
     public static void insertPM(ContentValues cv) throws SQLException {
-	StringBuilder INSERT = new StringBuilder("insert into " + TB_PM + " values(");
-	INSERT.append("'").append(cv.getAsString(Column.TIME)).append("',");
-	INSERT.append(cv.getAsInteger(Column.PID)).append(",");
-	INSERT.append(cv.getAsInteger(Column.TID)).append(",");
-	INSERT.append("'").append(cv.getAsString(Column.TAG)).append("',");
-	INSERT.append("'").append(cv.getAsString(Column.PKG)).append("',");
-	INSERT.append("'").append(cv.getAsString(Column.SIG)).append("',");
-	INSERT.append(cv.getAsInteger(Column.THREAD_TIME)).append(",");
-	INSERT.append(cv.getAsInteger(Column.CPU_TIME)).append(",");
-	INSERT.append(cv.getAsLong(Column.CUR_THREAD_CPU_TIME)).append(",");
-	INSERT.append(cv.getAsLong(Column.CUR_PROCESS_CPU_TIME)).append(");");
-	sSt.addBatch(INSERT.toString());
+	sSt.addBatch(String.format(INSERT_SQL, cv.getAsString(Column.TIME),
+		cv.getAsInteger(Column.PID), cv.getAsInteger(Column.TID),
+		cv.getAsString(Column.TAG), cv.getAsString(Column.PKG),
+		cv.getAsString(Column.SIG),
+		cv.getAsInteger(Column.THREAD_TIME),
+		cv.getAsInteger(Column.CPU_TIME),
+		cv.getAsLong(Column.CUR_THREAD_CPU_TIME),
+		cv.getAsLong(Column.CUR_PROCESS_CPU_TIME)));
     }
-    
+
     public static void commit() throws SQLException {
 	sSt.executeBatch();
 	sConn.commit();
